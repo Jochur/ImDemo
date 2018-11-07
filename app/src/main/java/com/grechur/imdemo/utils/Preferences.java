@@ -30,4 +30,11 @@ public class Preferences {
     public static void saveUserToken(String s) {
         mSharedPreferences.edit().putString("userToken",s);
     }
+
+    public static void saveCookies(String url,String cookie){
+        mSharedPreferences.edit().putString(url,cookie).commit();
+    }
+    public static String getCookie(String url){
+        return mSharedPreferences.getString(url,"");
+    }
 }

@@ -2,8 +2,10 @@ package com.grechur.imdemo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.grechur.imdemo.auth.CrawlerTaobaoActivity;
+import com.grechur.imdemo.utils.Base64;
 import com.grechur.imdemo.utils.Preferences;
 import com.grechur.imdemo.utils.YunxinCache;
 import com.grechur.imdemo.utils.state.UserPreferences;
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     EditText et_enter_name;
     EditText et_to_name;
     TextView tv_message;
+    EditText et_input;
+    SearchView search;
     String msg = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +52,17 @@ public class MainActivity extends AppCompatActivity {
         et_enter_name = findViewById(R.id.et_enter_name);
         et_to_name = findViewById(R.id.et_to_name);
         tv_message = findViewById(R.id.tv_message);
+        et_input = findViewById(R.id.et_input);
+        search = findViewById(R.id.search);
+        String url = "bsdlks://polymerShopCar/bsdlks://polymerShopCar/h5-dev.xiaoxiangyoupin.com/polymerShopCar/";
+        Uri mParse = Uri.parse(url);
+        Toast.makeText(this,mParse.toString(),Toast.LENGTH_SHORT).show();
 
 
-
+        String cookie = "sdk_param=abtest%3Anouse%2Cmcid%3Atunion4android%40866952031696243%2Ccid%3Atunion4android%40866952031696243_1541557007663; cna=hm5oFEnYtgkCAYzPKEKu+ola; t=a474de465630c28f170067829b78e1d5; cookie2=19f0f854d4369a616407cf379a0961ea; v=0; _tb_token_=fa4f5345a5e35; ockeqeudmj=l%2BP6m2o%3D; munb=1035552794; WAPFDFDTGFG=%2B4cMKKP%2B8PI%2BuiiRalXO60DzEqDxdg%3D%3D; _w_app_lg=19; unb=1035552794; sg=64c; _l_g_=Ug%3D%3D; skt=e5d7226d9fbec9aa; uc1=cookie21=W5iHLLyFe3xm&cookie15=UtASsssmOIJ0bQ%3D%3D&cookie14=UoTYN4TRKQea7w%3D%3D; cookie1=ACOwjgR2YClwcAfB4teTwuhK1ytavZyKlGg6I99TrIw%3D; csg=b03b183d; uc3=vt3=F8dByR%2FL7ZNHkWPDiBg%3D&id2=UoH8WASWWSZ2%2Bw%3D%3D&nk2=2nQiTLnEXW4%3D&lg2=UIHiLt3xD8xYTw%3D%3D; tracknick=%5Cu679C%5Cu679C%5Cu580266; lgc=%5Cu679C%5Cu679C%5Cu580266; _cc_=VFC%2FuZ9ajQ%3D%3D; dnk=%5Cu679C%5Cu679C%5Cu580266; _nk_=%5Cu679C%5Cu679C%5Cu580266; cookie17=UoH8WASWWSZ2%2Bw%3D%3D; ntm=0; isg=BL6-x1O3aYsP4b2v06hzzv1IBNbAV6q-l6QgVmjHLoH8C1rlxY8qiLvqh5FlfnqR; _m_h5_tk=4284fb7443a128c0c6fc7dcd41de2a0c_1541567642159; _m_h5_tk_enc=b7f86a3e87229856c1ff61db69e25774";
+        String c64 = Base64.encode(cookie.getBytes());
+        Log.e("base64",c64);
+        search.startSearch();
     }
     public static void start(Context context) {
         start(context, false);
@@ -157,9 +170,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void taobao(View view){
-        Random random = new Random();
-        int position = random.nextInt(6);
-//        int position = 1;
+//        Random random = new Random();
+//        int position = random.nextInt(6);
+        String input =et_input.getText().toString();
+        int position = Integer.valueOf(input);
         startActivity(new Intent(this, CrawlerTaobaoActivity.class).putExtra("position",position));
     }
 
