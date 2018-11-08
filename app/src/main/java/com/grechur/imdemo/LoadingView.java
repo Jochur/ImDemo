@@ -17,46 +17,63 @@ import android.util.Log;
 import android.view.View;
 
 public class LoadingView extends View{
-
-    private final PathMeasure mPathMeasure;
-    //圆的半径
-    private int mRadiua;
+    //轨迹的辅助类
+    private PathMeasure mPathMeasure;
     //线的颜色
     private int mColor = Color.RED;
     //画笔
     private Paint mPaint;
-    //
     private Path mPath;
 
     private int mCenterX;
 
     private int mCenterY;
-
+    //开始的位置
     private float mStartAngle = -105;
-
+    //最大旋转角度
     private float mSweepAngle = -330;
-
+    //弧形旋转的角度
     private float mCurrentAngle ;
 
 
     //画图动画
-    private ValueAnimator mDrawAnimator;
-
+    private ValueAnimator mDrawArcAnimator;
+    //旋转动画
     private ValueAnimator mRotateAnimator;
-
+    //消失和进入动画
     private ValueAnimator mFadeAnimator;
 
+    //轨迹动画的path
     private Path mDestPath;
-    private float circleLength;
-    private float endD;
-    private float startD;
+    //圆弧形的长度
+    private float mCircleLength;
+    //弧形结束位置
+    private float mEndD;
+    //弧形开始位置
+    private float mStartD;
 
-    private LoaingStatus mStatus = LoaingStatus.DRAW;
+    //不同的阶段
+    private LoaingStatus mStatus = LoaingStatus.ARC;
+    //梯形总长度
+    private float mLength;
+
+    public void reset() {
+        if(mDrawArcAnimator!=null&&mFadeAnimator!=null&&mRotateAnimator!=null){
+            mDrawArcAnimator.cancel();
+            mDrawArcAnimator = null;
+            mRotateAnimator.cancel();
+            mRotateAnimator = null;
+            mFadeAnimator.cancel();
+            mFadeAnimator = null;
+        }
+        mPath.reset();
+    }
 
     public enum LoaingStatus{
-        DRAW,
-        FADE,
-        END,
+        ARC,//画弧形状态
+        FADE,//弧形消失
+        ENTRE,//开始画梯形
+        TRAPEZOID,//开始画梯形里面的弧形
     }
 
     public LoadingView(Context context) {
@@ -79,17 +96,13 @@ public class LoadingView extends View{
         mDestPath = new Path();
 
         mPathMeasure = new PathMeasure();
-        drawAnimation();
+//        drawArcAnimation();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        mCenterX = width/2;
-        mCenterY = height/2;
-        mRadiua = width/16;
+
     }
 
     @Override
@@ -98,10 +111,8 @@ public class LoadingView extends View{
         float y = getHeight() / 4;
         RectF oval = new RectF( x, y,
                 getWidth() - x, getHeight() - y);
-
-
         switch (mStatus){
-            case DRAW:
+            case ARC:
                 canvas.save();
                 mPath.addArc(oval,mStartAngle,mCurrentAngle);
                 canvas.drawPath(mPath,mPaint);
@@ -112,28 +123,37 @@ public class LoadingView extends View{
                 mPath.addArc(oval,-75,330);
                 canvas.save();
                 mPathMeasure.setPath(mPath, false);
-                circleLength = mPathMeasure.getLength();
-                endD = circleLength;
+                mCircleLength = mPathMeasure.getLength();
+                mEndD = mCircleLength;
                 mDestPath.reset();
-                Log.i("Tag", "sd:" + startD + ",ed:" + endD);
-                mPathMeasure.getSegment(startD, endD, mDestPath, true);
+                Log.i("Tag", "sd:" + mStartD + ",ed:" + mEndD);
+                mPathMeasure.getSegment(mStartD, mEndD, mDestPath, true);
                 canvas.drawPath(mDestPath, mPaint);
                 canvas.restore();
                 break;
-            case END:
+            case ENTRE:
                 mPath.reset();
                 canvas.save();
 //                RectF rectF = new RectF( x, y,
 //                        getWidth() - x, getHeight() - y);
 //                mPath.addRect(rectF,Path.Direction.CW);
                 mPath.moveTo(getWidth()-x-8,y);
-                mPath.rLineTo();
                 mPath.lineTo(getWidth()-x,getHeight()-y);
                 mPath.lineTo(x,getHeight() - y);
                 mPath.lineTo(x+8,y);
                 mPath.close();
+
+                mPathMeasure.setPath(mPath,false);
+                mLength = mPathMeasure.getLength();
+                mPathMeasure.getSegment(0,mStartD,mDestPath,true);
+                canvas.drawPath(mDestPath,mPaint);
+                canvas.restore();
+                break;
+            case TRAPEZOID:
+                canvas.save();
                 mPath.moveTo(getWidth()-x-15,y+14);
                 mPath.quadTo(getWidth()/2,getHeight()/2,x+15,y+14);
+
                 canvas.drawPath(mPath,mPaint);
                 canvas.restore();
                 break;
@@ -141,55 +161,83 @@ public class LoadingView extends View{
 
     }
 
-    private void drawAnimation(){
-        mDrawAnimator = ObjectAnimator.ofFloat(0,mSweepAngle);
-        mDrawAnimator.setDuration(1000);
-        mDrawAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+    private void drawArcAnimation(){
+        mDrawArcAnimator = ObjectAnimator.ofFloat(0,mSweepAngle);
+        mDrawArcAnimator.setDuration(1000);
+        mDrawArcAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mCurrentAngle = (float) animation.getAnimatedValue();
                 invalidate();
             }
         });
-        mDrawAnimator.addListener(new AnimatorListenerAdapter() {
+        mDrawArcAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 rotateAnimation();
             }
         });
-        mDrawAnimator.start();
+        mDrawArcAnimator.start();
     }
 
     private void rotateAnimation(){
-        mRotateAnimator = ObjectAnimator.ofFloat(this,"rotation", -720);
+        mRotateAnimator = ObjectAnimator.ofFloat(LoadingView.this,"rotation", -720);
         mRotateAnimator.setDuration(1000);
         mRotateAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                fadeAnimation();
                 mStatus = LoaingStatus.FADE;
+                fadeAnimation(0);
             }
         });
         mRotateAnimator.start();
     }
-    private void fadeAnimation(){
+    private void fadeAnimation(final int type){
         mFadeAnimator = ObjectAnimator.ofFloat(0,1);
-        mFadeAnimator.setDuration(5000);
+        mFadeAnimator.setDuration(1000);
         mFadeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                startD = (float) animation.getAnimatedValue()*circleLength;
+                if(type == 0){
+                    mStartD = (float) animation.getAnimatedValue()*mCircleLength;
+                }else{
+                    mStartD = (float) animation.getAnimatedValue()*mLength;
+                }
                 invalidate();
             }
         });
         mFadeAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mStatus = LoaingStatus.END;
+                if(type == 0){
+                    mStatus = LoaingStatus.ENTRE;
+                    fadeAnimation(1);
+                }else if(type == 1){
+                    mStatus = LoaingStatus.TRAPEZOID;
+                }
+
             }
         });
         mFadeAnimator.start();
+    }
+
+    public void startAnimal(){
+        mStatus = LoaingStatus.ARC;
+        drawArcAnimation();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if(mDrawArcAnimator!=null&&mFadeAnimator!=null&&mRotateAnimator!=null){
+            mDrawArcAnimator.cancel();
+            mDrawArcAnimator = null;
+            mRotateAnimator.cancel();
+            mRotateAnimator = null;
+            mFadeAnimator.cancel();
+            mFadeAnimator = null;
+        }
     }
 }

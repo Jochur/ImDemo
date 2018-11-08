@@ -26,6 +26,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
@@ -49,15 +50,21 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
     private WebView webView;
     private ContentLoadingProgressBar progress;
 
-    private boolean isFristLogin = false;
+//    private boolean isFristLogin = false;
 
 //    private String[] cookiesUrls = {
 //            "http://h5.m.taobao.com/mlapp/mytaobao.html","https://m.jd.com/",
 //            "https://www.amazon.cn/ap/signin","http://msinode.suning.com/m/home.do",
 //            "https://u.m.gome.com.cn/my_gome.html","http://www.yhd.com/"
 //    };
+//    private String[] cookiesUrls = {
+//            "https://market.m.taobao.com/app/mtb/evaluation-list/pages/index","https://home.jd.com",
+//            "https://www.amazon.cn/gp/yourstore","https://msinode.suning.com/m/home.do",
+//            "https://u.m.gome.com.cn/my_gome.html","http://home.m.yhd.com/h5index/index.do"
+//    };
+
     private String[] cookiesUrls = {
-            "https://market.m.taobao.com/app/mtb/evaluation-list/pages/index","https://home.jd.com",
+            "https://market.m.taobao.com/app/tmall-wireless/sign-center/pages/index_v2","https://home.jd.com",
             "https://www.amazon.cn/gp/yourstore","https://msinode.suning.com/m/home.do",
             "https://u.m.gome.com.cn/my_gome.html","http://home.m.yhd.com/h5index/index.do"
     };
@@ -101,14 +108,14 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         CookieSyncManager.createInstance(this);
         CookieSyncManager.getInstance().startSync();
 //        CookieManager.getInstance().removeSessionCookie();
-        if(true){
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                CookieManager.getInstance().flush();
-            } else {
-                CookieSyncManager.createInstance(this.getApplicationContext());
-                CookieSyncManager.getInstance().sync();
-            }
-        }
+//        if(true){
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//                CookieManager.getInstance().flush();
+//            } else {
+//                CookieSyncManager.createInstance(this.getApplicationContext());
+//                CookieSyncManager.getInstance().sync();
+//            }
+//        }
         webView.getSettings().setJavaScriptEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             webView.getSettings().setSafeBrowsingEnabled(false);
@@ -118,6 +125,8 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
 
         String mUsetAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2783.5 Safari/537.36";
         webView.getSettings().setUserAgentString(mUsetAgent);
+
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
@@ -147,11 +156,11 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.e("url----->> ", url);
-                if (isFristLogin) {
-
-                    onLoginSuccess(view, url);
-                    return;
-                }
+//                if (isFristLogin) {
+//
+//                    onLoginSuccess(view, url);
+//                    return;
+//                }
 //                webView.postDelayed(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -160,7 +169,7 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
 //                    }
 //                },1000);
                 if (url.startsWith(loginUrls[position])) {
-                    isFristLogin = false;
+//                    isFristLogin = false;
                     System.out.println(allJS[position]);
 //                    mHandler.sendEmptyMessageDelayed(4, 1000);
                     webView.loadUrl("javascript:"+allJS[position]);
@@ -174,16 +183,23 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
 //                            return;
 //                        }
 
-                        if (!isFristLogin) {
-                            isFristLogin = true;
-                        }
+//                        if (!isFristLogin) {
+//                            isFristLogin = true;
+//                        }
                         CookieManager cookieManager = CookieManager.getInstance();
                         String CookieStr = cookieManager.getCookie(url);
-                        Log.e("CookieStr", CookieStr);
-//                        finish();
+                        if(CookieStr.contains("cookie2")) {
+                            Log.e("CookieStr", CookieStr);
+                            finish();
+                        }
                     }
                 }
 
+            }
+
+            @Override
+            public void onPageCommitVisible(WebView view, String url) {
+                Log.e("onPageCommitVisible",url);
             }
 
             @Override
@@ -228,6 +244,10 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         if (mRunnable != null && mHandlerTimeOut != null) {
             mHandlerTimeOut.removeCallbacks(mRunnable);
         }
+        webView.clearCache(true);
+            // 清除cookie即可彻底清除缓存
+            CookieSyncManager.createInstance(this);
+            CookieManager.getInstance().removeAllCookie();
         if(webView != null) {
             webView.stopLoading();
             webView.removeAllViews();

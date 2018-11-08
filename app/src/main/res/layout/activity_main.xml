@@ -64,8 +64,10 @@
     
     
     <com.grechur.imdemo.LoadingView
+        android:id="@+id/loading"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:onClick="startAnimal"/>
     
     <com.grechur.imdemo.SearchView
         android:layout_width="match_parent"

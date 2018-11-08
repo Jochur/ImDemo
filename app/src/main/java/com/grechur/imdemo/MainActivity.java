@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_message;
     EditText et_input;
     SearchView search;
+    LoadingView loading;
     String msg = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         tv_message = findViewById(R.id.tv_message);
         et_input = findViewById(R.id.et_input);
         search = findViewById(R.id.search);
+        loading = findViewById(R.id.loading);
         String url = "bsdlks://polymerShopCar/bsdlks://polymerShopCar/h5-dev.xiaoxiangyoupin.com/polymerShopCar/";
         Uri mParse = Uri.parse(url);
         Toast.makeText(this,mParse.toString(),Toast.LENGTH_SHORT).show();
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         textMessage.setPushContent(text);
         // 发送给对方
         NIMClient.getService(MsgService.class).sendMessage(textMessage, false);
+
     }
 
 
@@ -175,6 +178,11 @@ public class MainActivity extends AppCompatActivity {
         String input =et_input.getText().toString();
         int position = Integer.valueOf(input);
         startActivity(new Intent(this, CrawlerTaobaoActivity.class).putExtra("position",position));
+    }
+
+    public void startAnimal(View v){
+        loading.reset();
+        loading.startAnimal();
     }
 
 }
