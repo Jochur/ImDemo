@@ -22,15 +22,22 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true">
+            android:layout_centerVertical="true"
+            >
 
             <com.netease.nim.uikit.common.ui.imageview.HeadImageView
                 android:id="@+id/img_head"
-                android:layout_width="@dimen/avatar_size_default"
-                android:layout_height="@dimen/avatar_size_default"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="12dp"/>
+                android:layout_width="@dimen/avatar_size_in_session"
+                android:layout_height="@dimen/avatar_size_in_session"
+                android:layout_gravity="center"
+                />
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="50dp"
+                android:src="@drawable/headpic_lovercard_vip"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"
+                />
         </FrameLayout>
 
         <TextView

@@ -2,20 +2,34 @@ package com.grechur.imdemo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
+import com.bumptech.glide.Glide;
 import com.grechur.imdemo.auth.CrawlerTaobaoActivity;
 import com.grechur.imdemo.utils.Base64;
 import com.grechur.imdemo.utils.Preferences;
 import com.grechur.imdemo.utils.YunxinCache;
+import com.grechur.imdemo.utils.glide.GlideCircleTransform;
+import com.grechur.imdemo.utils.glide.GlideImageLoaderStrategy;
+import com.grechur.imdemo.utils.glide.ImageConfigImpl;
+import com.grechur.imdemo.utils.glide.ImageLoader;
+import com.grechur.imdemo.utils.glide.PicassoImageLoaderStrategy;
 import com.grechur.imdemo.utils.state.UserPreferences;
 import com.netease.nim.uikit.api.NimUIKit;
 import com.netease.nimlib.sdk.NIMClient;
@@ -37,24 +51,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import android.support.v7.widget.SearchView;
+
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class MainActivity extends AppCompatActivity {
+    Toolbar toolbar;
     EditText et_enter_name;
     EditText et_to_name;
     TextView tv_message;
     EditText et_input;
-    SearchView search;
+//    SearchView search;
     LoadingView loading;
     String msg = "";
+    private SearchView searchView;
+    ImageView iv_image;
+    private String imgurl = "https://www.baidu.com/img/bd_logo1.png";
+    private ImageView iv_image2;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.mipmap.nav_icon_back_nor));
         et_enter_name = findViewById(R.id.et_enter_name);
         et_to_name = findViewById(R.id.et_to_name);
         tv_message = findViewById(R.id.tv_message);
         et_input = findViewById(R.id.et_input);
-        search = findViewById(R.id.search);
+//        search = findViewById(R.id.search);
         loading = findViewById(R.id.loading);
         String url = "bsdlks://polymerShopCar/bsdlks://polymerShopCar/h5-dev.xiaoxiangyoupin.com/polymerShopCar/";
         Uri mParse = Uri.parse(url);
@@ -64,8 +92,82 @@ public class MainActivity extends AppCompatActivity {
         String cookie = "sdk_param=abtest%3Anouse%2Cmcid%3Atunion4android%40866952031696243%2Ccid%3Atunion4android%40866952031696243_1541557007663; cna=hm5oFEnYtgkCAYzPKEKu+ola; t=a474de465630c28f170067829b78e1d5; cookie2=19f0f854d4369a616407cf379a0961ea; v=0; _tb_token_=fa4f5345a5e35; ockeqeudmj=l%2BP6m2o%3D; munb=1035552794; WAPFDFDTGFG=%2B4cMKKP%2B8PI%2BuiiRalXO60DzEqDxdg%3D%3D; _w_app_lg=19; unb=1035552794; sg=64c; _l_g_=Ug%3D%3D; skt=e5d7226d9fbec9aa; uc1=cookie21=W5iHLLyFe3xm&cookie15=UtASsssmOIJ0bQ%3D%3D&cookie14=UoTYN4TRKQea7w%3D%3D; cookie1=ACOwjgR2YClwcAfB4teTwuhK1ytavZyKlGg6I99TrIw%3D; csg=b03b183d; uc3=vt3=F8dByR%2FL7ZNHkWPDiBg%3D&id2=UoH8WASWWSZ2%2Bw%3D%3D&nk2=2nQiTLnEXW4%3D&lg2=UIHiLt3xD8xYTw%3D%3D; tracknick=%5Cu679C%5Cu679C%5Cu580266; lgc=%5Cu679C%5Cu679C%5Cu580266; _cc_=VFC%2FuZ9ajQ%3D%3D; dnk=%5Cu679C%5Cu679C%5Cu580266; _nk_=%5Cu679C%5Cu679C%5Cu580266; cookie17=UoH8WASWWSZ2%2Bw%3D%3D; ntm=0; isg=BL6-x1O3aYsP4b2v06hzzv1IBNbAV6q-l6QgVmjHLoH8C1rlxY8qiLvqh5FlfnqR; _m_h5_tk=4284fb7443a128c0c6fc7dcd41de2a0c_1541567642159; _m_h5_tk_enc=b7f86a3e87229856c1ff61db69e25774";
         String c64 = Base64.encode(cookie.getBytes());
         Log.e("base64",c64);
-        search.startSearch();
+        iv_image = findViewById(R.id.iv_image);
+        iv_image2 = findViewById(R.id.iv_image2);
+//        Glide.with(this).load(imgurl).into(iv_image);
+//        search.startSearch();
+//.transformation(new CropCircleTransformation(this))
+        ImageLoader.getInstance(GlideImageLoaderStrategy.class).LoadImage(this,
+        ImageConfigImpl.builder()
+                .url(imgurl)
+                .hasCache(true)
+                .transformation(new GlideCircleTransform(this))
+                .placeholder(R.drawable.message_plus_snapchat_normal)
+                .imageView(iv_image)
+                .build()
+        );
+
+        ImageLoader.getInstance(PicassoImageLoaderStrategy.class).LoadImage(this,
+                ImageConfigImpl.builder()
+                        .url(imgurl)
+                        .hasCache(true)
+                        .transformation(new GlideCircleTransform(this))
+                        .placeholder(R.drawable.message_plus_snapchat_normal)
+                        .imageView(iv_image2)
+                        .build()
+        );
     }
+    private static Handler handler;
+    protected final Handler getHandler() {
+        if (handler == null) {
+            handler = new Handler(getMainLooper());
+        }
+        return handler;
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.global_search_menu, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                MenuItemCompat.expandActionView(item);
+            }
+        });
+        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                finish();
+                return false;
+            }
+        });
+
+        searchView = (SearchView) MenuItemCompat.getActionView(item);
+        SearchView.SearchAutoComplete textView = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+        textView.setTextColor(Color.RED);
+        textView.setHintTextColor(Color.BLUE);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
+
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String text) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String text) {
+                return true;
+            }
+        });
+        return true;
+    }
+
     public static void start(Context context) {
         start(context, false);
     }
@@ -181,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAnimal(View v){
-        loading.reset();
         loading.startAnimal();
     }
 

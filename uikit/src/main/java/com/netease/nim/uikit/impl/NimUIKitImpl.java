@@ -36,6 +36,7 @@ import com.netease.nim.uikit.business.session.activity.P2PMessageActivity;
 import com.netease.nim.uikit.business.session.activity.TeamMessageActivity;
 import com.netease.nim.uikit.business.session.audio.MessageAudioControl;
 import com.netease.nim.uikit.business.session.emoji.StickerManager;
+import com.netease.nim.uikit.business.session.module.DisPlay;
 import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
@@ -71,6 +72,8 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.netease.nimlib.sdk.team.constant.TeamTypeEnum;
 import com.netease.nimlib.sdk.team.model.Team;
+
+import java.util.List;
 
 /**
  * UIKit能力实现类。
@@ -334,6 +337,10 @@ public final class NimUIKitImpl {
         NimUIKitImpl.startChatting(context, account, SessionTypeEnum.P2P, commonP2PSessionCustomization, anchor);
     }
 
+    public static void startP2PSession(Context context, String account, IMMessage anchor, List<DisPlay> disPlays) {
+        NimUIKitImpl.startChatting(context, account, SessionTypeEnum.P2P, commonP2PSessionCustomization, anchor,disPlays);
+    }
+
     public static void startTeamSession(Context context, String tid) {
         startTeamSession(context, tid, null);
     }
@@ -350,6 +357,15 @@ public final class NimUIKitImpl {
             customization, IMMessage anchor) {
         if (sessionType == SessionTypeEnum.P2P) {
             P2PMessageActivity.start(context, id, customization, anchor);
+        } else if (sessionType == SessionTypeEnum.Team) {
+            TeamMessageActivity.start(context, id, customization, null, anchor);
+        }
+    }
+
+    public static void startChatting(Context context, String id, SessionTypeEnum sessionType, SessionCustomization
+            customization, IMMessage anchor,List<DisPlay> disPlays) {
+        if (sessionType == SessionTypeEnum.P2P) {
+            P2PMessageActivity.start(context, id, customization, anchor,disPlays);
         } else if (sessionType == SessionTypeEnum.Team) {
             TeamMessageActivity.start(context, id, customization, null, anchor);
         }

@@ -23,6 +23,7 @@ import com.netease.nim.uikit.api.model.user.IUserInfoProvider;
 import com.netease.nim.uikit.api.model.user.UserInfoObservable;
 import com.netease.nim.uikit.business.chatroom.viewholder.ChatRoomMsgViewHolderBase;
 import com.netease.nim.uikit.business.contact.selector.activity.ContactSelectActivity;
+import com.netease.nim.uikit.business.session.module.DisPlay;
 import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.business.session.viewholder.MsgViewHolderBase;
@@ -40,6 +41,7 @@ import com.netease.nimlib.sdk.msg.attachment.MsgAttachment;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -318,6 +320,9 @@ public class NimUIKit {
         NimUIKitImpl.startP2PSession(context, account, anchor);
     }
 
+    public static void startP2PSession(Context context, String account, IMMessage anchor, List<DisPlay> disPlays) {
+        NimUIKitImpl.startP2PSession(context, account, anchor,disPlays);
+    }
     /**
      * 打开群聊界面，若开发者未设置 {@link NimUIKitImpl#setCommonTeamSessionCustomization(SessionCustomization)},
      * 则定制化信息 SessionCustomization 为{@link DefaultTeamSessionCustomization}

@@ -17,7 +17,7 @@
         android:paddingRight="7dip"
         android:textColor="#ffffff"
         android:textSize="12sp"
-        android:textStyle="bold"
+
         android:visibility="gone" />
 
     <com.netease.nim.uikit.common.ui.imageview.HeadImageView

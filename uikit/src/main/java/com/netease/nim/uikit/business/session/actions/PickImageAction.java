@@ -1,5 +1,6 @@
 package com.netease.nim.uikit.business.session.actions;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;

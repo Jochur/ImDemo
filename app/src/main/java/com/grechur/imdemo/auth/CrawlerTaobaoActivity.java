@@ -244,10 +244,10 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         if (mRunnable != null && mHandlerTimeOut != null) {
             mHandlerTimeOut.removeCallbacks(mRunnable);
         }
-        webView.clearCache(true);
-            // 清除cookie即可彻底清除缓存
-            CookieSyncManager.createInstance(this);
-            CookieManager.getInstance().removeAllCookie();
+//        webView.clearCache(true);
+//            // 清除cookie即可彻底清除缓存
+//            CookieSyncManager.createInstance(this);
+//            CookieManager.getInstance().removeAllCookie();
         if(webView != null) {
             webView.stopLoading();
             webView.removeAllViews();

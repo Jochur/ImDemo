@@ -222,7 +222,8 @@
         <activity android:name=".utils.local.NavigationAmapActivity" />
         <activity android:name=".utils.chat.session.WatchSnapChatPictureActivity" />
         <activity android:name=".utils.chat.session.MessageHistoryActivity" />
-        <activity android:name=".auth.CrawlerTaobaoActivity"></activity>
+        <activity android:name=".auth.CrawlerTaobaoActivity" />
+        <activity android:name=".Main2Activity"></activity>
     </application>
 
 </manifest>

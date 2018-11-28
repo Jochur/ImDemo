@@ -18,6 +18,8 @@ import com.netease.nim.uikit.api.model.team.TeamDataChangedObserver;
 import com.netease.nim.uikit.api.model.team.TeamMemberDataChangedObserver;
 import com.netease.nim.uikit.api.model.user.UserInfoObserver;
 import com.netease.nim.uikit.business.recent.adapter.RecentContactAdapter;
+import com.netease.nim.uikit.business.session.constant.Extras;
+import com.netease.nim.uikit.business.session.module.CoupleCardInfo;
 import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
 import com.netease.nim.uikit.common.badger.Badger;
 import com.netease.nim.uikit.common.fragment.TFragment;
@@ -83,17 +85,28 @@ public class RecentContactsFragment extends TFragment {
     private RecentContactsCallback callback;
 
     private UserInfoObserver userInfoObserver;
+    private CoupleCardInfo mCoupleCardInfo;
+    private ConversationTopCallback mConversationTopCallback;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
+        parseIntent();
         findViews();
         initMessageList();
         requestMessages(true);
         registerObservers(true);
         registerDropCompletedListener(true);
         registerOnlineStateChangeListener(true);
+    }
+    private void parseIntent() {
+        if(getArguments().containsKey(Extras.EXTRA_COUPLE_CARD_INFO)&&getArguments().containsKey("callback")) {
+            mCoupleCardInfo = (CoupleCardInfo) getArguments().getSerializable(Extras.EXTRA_COUPLE_CARD_INFO);
+        }
+    }
+
+    public void setConversationTopCallback(ConversationTopCallback mConversationTopCallback) {
+        this.mConversationTopCallback = mConversationTopCallback;
     }
 
     @Override
@@ -261,8 +274,14 @@ public class RecentContactsFragment extends TFragment {
             public void onClick() {
                 if (isTagSet(recent, RECENT_TAG_STICKY)) {
                     removeTag(recent, RECENT_TAG_STICKY);
+                    if(mCoupleCardInfo!=null&&mCoupleCardInfo.getData()!=null){
+                        if(mConversationTopCallback!=null)mConversationTopCallback.onCall(false);
+                    }
                 } else {
                     addTag(recent, RECENT_TAG_STICKY);
+                    if(mCoupleCardInfo!=null&&mCoupleCardInfo.getData()!=null){
+                        if(mConversationTopCallback!=null)mConversationTopCallback.onCall(false);
+                    }
                 }
                 NIMClient.getService(MsgService.class).updateRecent(recent);
 

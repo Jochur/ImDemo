@@ -113,6 +113,7 @@ public class LoadingView extends View{
                 getWidth() - x, getHeight() - y);
         switch (mStatus){
             case ARC:
+                mPath.reset();
                 canvas.save();
                 mPath.addArc(oval,mStartAngle,mCurrentAngle);
                 canvas.drawPath(mPath,mPaint);
@@ -182,17 +183,28 @@ public class LoadingView extends View{
     }
 
     private void rotateAnimation(){
-        mRotateAnimator = ObjectAnimator.ofFloat(LoadingView.this,"rotation", -720);
-        mRotateAnimator.setDuration(1000);
-        mRotateAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mStatus = LoaingStatus.FADE;
-                fadeAnimation(0);
-            }
-        });
-        mRotateAnimator.start();
+        if(mRotateAnimator!=null){
+            mRotateAnimator.reverse();
+        }else {
+            mRotateAnimator = ObjectAnimator.ofFloat(LoadingView.this, "rotation", -720);
+            mRotateAnimator.setDuration(1000);
+            mRotateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float angle = (float) animation.getAnimatedValue();
+                    Log.e("mRotateAnimator", String.valueOf(angle));
+                }
+            });
+            mRotateAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    mStatus = LoaingStatus.FADE;
+                    fadeAnimation(0);
+                }
+            });
+            mRotateAnimator.start();
+        }
     }
     private void fadeAnimation(final int type){
         mFadeAnimator = ObjectAnimator.ofFloat(0,1);

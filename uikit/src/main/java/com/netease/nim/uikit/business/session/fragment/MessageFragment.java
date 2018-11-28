@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,12 @@ import com.netease.nim.uikit.business.ait.AitManager;
 import com.netease.nim.uikit.business.session.actions.BaseAction;
 import com.netease.nim.uikit.business.session.actions.ImageAction;
 import com.netease.nim.uikit.business.session.actions.LocationAction;
+import com.netease.nim.uikit.business.session.actions.PhotoAction;
+import com.netease.nim.uikit.business.session.actions.TakeAction;
 import com.netease.nim.uikit.business.session.actions.VideoAction;
 import com.netease.nim.uikit.business.session.constant.Extras;
 import com.netease.nim.uikit.business.session.module.Container;
+import com.netease.nim.uikit.business.session.module.DisPlay;
 import com.netease.nim.uikit.business.session.module.ModuleProxy;
 import com.netease.nim.uikit.business.session.module.input.InputPanel;
 import com.netease.nim.uikit.business.session.module.list.MessageListPanelEx;
@@ -69,6 +73,8 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     protected MessageListPanelEx messageListPanel;
 
     protected AitManager aitManager;
+
+    private List<DisPlay> mDisplays;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -135,6 +141,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     private void parseIntent() {
         sessionId = getArguments().getString(Extras.EXTRA_ACCOUNT);
         sessionType = (SessionTypeEnum) getArguments().getSerializable(Extras.EXTRA_TYPE);
+        mDisplays = (List<DisPlay>) getArguments().getSerializable("show");
         IMMessage anchor = (IMMessage) getArguments().getSerializable(Extras.EXTRA_ANCHOR);
 
         customization = (SessionCustomization) getArguments().getSerializable(Extras.EXTRA_CUSTOMIZATION);
@@ -381,12 +388,32 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     // 操作面板集合
     protected List<BaseAction> getActionList() {
         List<BaseAction> actions = new ArrayList<>();
-        actions.add(new ImageAction());
-        actions.add(new VideoAction());
-        actions.add(new LocationAction());
-
-        if (customization != null && customization.actions != null) {
-            actions.addAll(customization.actions);
+        if(mDisplays.size()>0){
+            for (DisPlay display : mDisplays) {
+                if(display.id == 1&&display.isShow){
+                    actions.add(new PhotoAction());
+                }else if(display.id == 2&&display.isShow){
+                    actions.add(new TakeAction());
+                }else if(display.id == 3&&display.isShow){
+                    actions.add(new LocationAction());
+                }else if(display.id == 4&&display.isShow){
+                    if (customization != null && customization.actions != null&&customization.actions.size()>0) {
+                        actions.add(customization.actions.get(0));
+                    }
+                }else if(display.id == 5&&display.isShow){
+                    if (customization != null && customization.actions != null && customization.actions.size()>1) {
+                        actions.add(customization.actions.get(1));
+                    }
+                }
+            }
+        }else {
+//        actions.add(new VideoAction());
+            actions.add(new PhotoAction());
+            actions.add(new TakeAction());
+            actions.add(new LocationAction());
+            if (customization != null && customization.actions != null) {
+                actions.addAll(customization.actions);
+            }
         }
         return actions;
     }

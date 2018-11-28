@@ -21,6 +21,7 @@ import com.netease.nim.uikit.api.model.user.UserInfoObserver;
 import com.netease.nim.uikit.api.wrapper.NimToolBarOptions;
 import com.netease.nim.uikit.business.session.constant.Extras;
 import com.netease.nim.uikit.business.session.fragment.MessageFragment;
+import com.netease.nim.uikit.business.session.module.DisPlay;
 import com.netease.nim.uikit.business.uinfo.UserInfoHelper;
 import com.netease.nim.uikit.common.activity.ToolBarOptions;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
@@ -31,6 +32,8 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +46,7 @@ import java.util.Set;
 public class P2PMessageActivity extends BaseMessageActivity {
 
     private boolean isResume = false;
+    private List<DisPlay> mDisPlays;
     private String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO,Manifest.permission.READ_EXTERNAL_STORAGE
     ,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION};
     public static void start(Context context, String contactId, SessionCustomization customization, IMMessage anchor) {
@@ -55,6 +59,19 @@ public class P2PMessageActivity extends BaseMessageActivity {
         intent.setClass(context, P2PMessageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+        context.startActivity(intent);
+    }
+
+    public static void start(Context context, String contactId, SessionCustomization customization, IMMessage anchor,List<DisPlay> disPlays) {
+        Intent intent = new Intent();
+        intent.putExtra(Extras.EXTRA_ACCOUNT, contactId);
+        intent.putExtra(Extras.EXTRA_CUSTOMIZATION, customization);
+        if (anchor != null) {
+            intent.putExtra(Extras.EXTRA_ANCHOR, anchor);
+        }
+        intent.setClass(context, P2PMessageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("show", (Serializable) disPlays);
         context.startActivity(intent);
     }
 
@@ -214,8 +231,21 @@ public class P2PMessageActivity extends BaseMessageActivity {
 
     @Override
     protected MessageFragment fragment() {
+//        DisPlay disPlay = new DisPlay();
+//        disPlay.id = 1;
+//        disPlay.funcationName = "相册";
+//        disPlay.isShow = true;
+//
+//        DisPlay disPlay1 = new DisPlay();
+//        disPlay1.id = 3;
+//        disPlay1.funcationName = "位置";
+//        disPlay1.isShow = true;
+//        List<DisPlay> disPlays = new ArrayList<>();
+//        disPlays.add(disPlay);
+//        disPlays.add(disPlay1);
         Bundle arguments = getIntent().getExtras();
         arguments.putSerializable(Extras.EXTRA_TYPE, SessionTypeEnum.P2P);
+        arguments.putSerializable("show", (Serializable) mDisPlays);
         MessageFragment fragment = new MessageFragment();
         fragment.setArguments(arguments);
         fragment.setContainerId(R.id.message_fragment_container);
@@ -231,6 +261,8 @@ public class P2PMessageActivity extends BaseMessageActivity {
     protected void initToolBar() {
         ToolBarOptions options = new NimToolBarOptions();
         setToolBar(R.id.toolbar, options);
+
+        mDisPlays = (List<DisPlay>) getIntent().getSerializableExtra("show");
     }
 
     @Override

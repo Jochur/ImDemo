@@ -2,6 +2,7 @@ package com.grechur.imdemo;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.grechur.imdemo.utils.ReminderManager;
@@ -9,8 +10,12 @@ import com.grechur.imdemo.utils.chat.attachment.StickerAttachment;
 import com.grechur.imdemo.utils.chat.attachment.GuessAttachment;
 import com.grechur.imdemo.utils.chat.attachment.SnapChatAttachment;
 import com.netease.nim.uikit.api.NimUIKit;
+import com.netease.nim.uikit.business.recent.ConversationTopCallback;
 import com.netease.nim.uikit.business.recent.RecentContactsCallback;
 import com.netease.nim.uikit.business.recent.RecentContactsFragment;
+import com.netease.nim.uikit.business.session.constant.Extras;
+import com.netease.nim.uikit.business.session.module.CoupleCardInfo;
+import com.netease.nim.uikit.business.session.module.DisPlay;
 import com.netease.nim.uikit.business.session.module.MsgForwardFilter;
 import com.netease.nim.uikit.business.session.module.MsgRevokeFilter;
 import com.netease.nim.uikit.common.activity.UI;
@@ -36,6 +41,9 @@ public class ListActivity extends UI {
     // 同时在线的其他端的信息
     private List<OnlineClient> onlineClients;
     TextView status;
+    List<DisPlay> disPlays;
+    private CoupleCardInfo mCoupleCardInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +55,55 @@ public class ListActivity extends UI {
         // 开启/关闭通知栏消息提醒   在当前页面不提示
         NIMClient.toggleNotification(false);
         addRecentContactsFragment();
+
+        DisPlay disPlay = new DisPlay();
+        disPlay.id = 1;
+        disPlay.funcationName = "相册";
+        disPlay.isShow = true;
+
+        DisPlay disPlay0 = new DisPlay();
+        disPlay0.id = 2;
+        disPlay0.funcationName = "拍摄";
+        disPlay0.isShow = true;
+
+        DisPlay disPlay1 = new DisPlay();
+        disPlay1.id = 3;
+        disPlay1.funcationName = "位置";
+        disPlay1.isShow = true;
+
+        DisPlay disPlay3 = new DisPlay();
+        disPlay3.id = 4;
+        disPlay3.funcationName = "猜拳";
+        disPlay3.isShow = true;
+
+        DisPlay disPlay2 = new DisPlay();
+        disPlay2.id = 5;
+        disPlay2.funcationName = "阅后即焚";
+        disPlay2.isShow = true;
+        disPlays = new ArrayList<>();
+        disPlays.add(disPlay);
+        disPlays.add(disPlay0);
+        disPlays.add(disPlay1);
+        disPlays.add(disPlay2);
+        disPlays.add(disPlay3);
+        Log.e("diplays",disPlays.toString());
     }
 
     public void addRecentContactsFragment(){
+        Bundle arguments = new Bundle();
+        mCoupleCardInfo = new CoupleCardInfo();
+        CoupleCardInfo.CoupleInfo coupleInfo = new CoupleCardInfo.CoupleInfo();
+        coupleInfo.setLoversCardFlag(true);
+        coupleInfo.setLoversCardOtherUserId("e9f825de68c11229987cd3e1201fc785");
+        coupleInfo.setTop("true");
+//        coupleInfo.setConversationTopCallback(conversationTopCallback);
+        mCoupleCardInfo.setData(coupleInfo);
+        if (mCoupleCardInfo != null && mCoupleCardInfo.getData() != null && mCoupleCardInfo.getData().isLoversCardFlag()) {
+            arguments.putSerializable(Extras.EXTRA_COUPLE_CARD_INFO, mCoupleCardInfo);
+        }
         fragment = new RecentContactsFragment();
+        fragment.setArguments(arguments);
+        fragment.setConversationTopCallback(conversationTopCallback);
         fragment.setContainerId(R.id.messages_fragment);
 // 如果是activity从堆栈恢复，FM中已经存在恢复而来的fragment，此时会使用恢复来的，而new出来这个会被丢弃掉
         fragment = (RecentContactsFragment) addFragment(fragment);
@@ -71,7 +124,7 @@ public class ListActivity extends UI {
                 // 回调函数，以供打开会话窗口时传入定制化参数，或者做其他动作
                 switch (recent.getSessionType()) {
                     case P2P:
-                        startP2PSession(ListActivity.this, recent.getContactId());
+                        startP2PSession(ListActivity.this, recent.getContactId(),null,disPlays);
                         NimUIKit.setMsgForwardFilter(new MsgForwardFilter() {
                             @Override
                             public boolean shouldIgnore(IMMessage message) {
@@ -132,6 +185,12 @@ public class ListActivity extends UI {
     public static void startP2PSession(Context context, String account, IMMessage anchor) {
         if (!NimUIKit.getAccount().equals(account)) {
             NimUIKit.startP2PSession(context, account, anchor);
+        }
+    }
+
+    public static void startP2PSession(Context context, String account, IMMessage anchor,List<DisPlay> disPlays) {
+        if (!NimUIKit.getAccount().equals(account)) {
+            NimUIKit.startP2PSession(context, account, anchor,disPlays);
         }
     }
 
@@ -226,4 +285,13 @@ public class ListActivity extends UI {
         super.onDestroy();
 
     }
+
+    ConversationTopCallback conversationTopCallback = new ConversationTopCallback() {
+        @Override
+        public void onCall(boolean isTagSet) {
+            int top = 0;
+            if (isTagSet) top = 1;
+            Log.e("ConversationTopCallback","回来了"+isTagSet);
+        }
+    };
 }
