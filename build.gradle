@@ -42,4 +42,6 @@ ext {
     sdkTargetCompatibility = 1.7
     appSourceCompatibility = 1.7
     appTargetCompatibility = 1.7
+    supportVersion = '25.3.1'
+
 }

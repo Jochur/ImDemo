@@ -1,0 +1,63 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:17:1-39:12
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:17:1-39:12
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:17:1-39:12
+	package
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:19:5-32
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:18:5-63
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:21:5-80
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:21:22-78
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:22:5-79
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:22:22-77
+application
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:24:5-38:19
+activity#com.zhihu.matisse.ui.MatisseActivity
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:25:9-72
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:25:19-70
+activity#com.zhihu.matisse.internal.ui.AlbumPreviewActivity
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:26:9-86
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:26:19-84
+activity#com.zhihu.matisse.internal.ui.SelectedPreviewActivity
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:27:9-89
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:27:19-87
+provider#android.support.v4.content.FileProvider
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:29:9-37:20
+	android:grantUriPermissions
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:33:13-47
+	android:authorities
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:31:13-65
+	android:exported
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:32:13-37
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:30:13-67
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:34:13-36:61
+	android:resource
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:36:17-58
+	android:name
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml:35:17-67
+uses-sdk
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+		ADDED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml
+		INJECTED from D:\work\ImDemo\matisse\src\main\AndroidManifest.xml

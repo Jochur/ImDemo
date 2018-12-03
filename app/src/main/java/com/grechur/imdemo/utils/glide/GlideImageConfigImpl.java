@@ -4,14 +4,13 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
-public class ImageConfigImpl extends ImageConfig{
+public class GlideImageConfigImpl extends ImageConfig{
     private boolean hasCache;//是否需要缓存
     private Transformation<Bitmap> transformation;//需要的图形
 
     //建造者模式来构建配置信息这个对象
-    private ImageConfigImpl(Builder builder) {
+    private GlideImageConfigImpl(Builder builder) {
         this.url = builder.url;
         this.imgView = builder.imageView;
         this.placeHolder = builder.placeHolder;
@@ -67,8 +66,8 @@ public class ImageConfigImpl extends ImageConfig{
         }
 
         //构造出ImageConfigImpl对象
-        public ImageConfigImpl build() {
-            return new ImageConfigImpl(this);
+        public GlideImageConfigImpl build() {
+            return new GlideImageConfigImpl(this);
         }
     }
 }

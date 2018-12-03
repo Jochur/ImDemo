@@ -2,6 +2,7 @@ package com.grechur.imdemo.auth;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -39,9 +40,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import com.alibaba.fastjson.JSON;
+import com.grechur.imdemo.CookieModel;
 import com.grechur.imdemo.R;
 import com.grechur.imdemo.utils.Preferences;
 
@@ -81,10 +85,10 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
             "https://www.amazon.cn/gp/aw/c","https://shopping.suning.com/project/cart/cart1.html",
             "https://cart.m.gome.com.cn/shopping_cart.html","https://cart.m.yhd.com/cart/showCart.do"
     };
+    private String jd_hideOthers_android = "(function() { var wh=document.getElementsByClassName('w');for(i=0;i<wh.length;i++){wh[i].style.cssText= 'width:auto';}document.getElementById('logo').style.marginLeft = '40px';document.getElementsByClassName('q-link')[0].style.display = 'none';document.getElementsByClassName('login-banner')[0].style.display = 'none';document.getElementById('footer-2013').style.display = 'none';document.getElementById('kbCoagent').style.display = 'none';document.getElementsByClassName('item item-fore4')[0].style.display = 'none';document.getElementsByClassName('tips-wrapper')[0].style.display = 'none';document.getElementsByClassName('tips-wrapper')[1].style.display = 'none';document.getElementsByClassName('login-tab login-tab-l')[0].style.display = 'none';var l=document.getElementsByClassName('login-tab login-tab-r')[0];var e=document.createEvent('HTMLEvents');e.initEvent('click',true,true);l.dispatchEvent(e);})()";
+    //        private String jd_hideOthers_android = "(function() {function jdnonedomeFn() {let loginBanner = document.getElementsByClassName('login-banner')[0];let tipsWrapper = document.getElementsByClassName('tips-wrapper');let loginForm = document.getElementsByClassName('login-form')[0];let w = document.getElementsByClassName('w');let loginBox = document.getElementsByClassName('login-box')[0];let qrcodeLogin = document.getElementsByClassName('qrcode-login')[0];let loginTab = document.getElementsByClassName('login-tab');let loginTabL = document.getElementsByClassName('login-tab-l')[0];let loginTabR = document.getElementsByClassName('login-tab-r')[0];let mc = document.getElementsByClassName('mc');let tabH = document.getElementsByClassName('tab-h')[0];let form = document.getElementsByClassName('form')[0];let itemFore4 = document.getElementsByClassName('item-fore4')[0];let itemFore1 = document.getElementsByClassName('item-fore1');let itemFore5 = document.getElementsByClassName('item-fore5');let kbCoagent = document.getElementById('kbCoagent');let msgWrap = document.getElementsByClassName('msg-wrap')[0];let loginWrap = document.getElementsByClassName('login-wrap')[0];let logo = document.getElementById('logo');let formlogin = document.getElementById('formlogin');let html = document.getElementsByTagName('html')[0];let body = document.getElementsByTagName('body')[0];let content = document.getElementById('content');var meta = document.createElement('meta') ;meta.setAttribute('name', 'viewport');meta.setAttribute('content', 'width=device-width');document.getElementsByTagName('head')[0].appendChild(meta);document.getElementsByClassName('q-link')[0].style.display = 'none'; document.getElementsByClassName('login-banner')[0].style.display = 'none';let content_offsetWidth = content.offsetWidth;loginForm.style.display = 'inline-block';loginForm.style.float = 'left';loginForm.style.width = '0';loginTabL.firstChild.nextElementSibling.className = '';loginTabR.firstChild.nextElementSibling.className = 'checked';loginBanner.style.display = 'none';loginTabR.click();let formlogin_offsetWidth = formlogin.offsetWidth;loginForm.style['margin-left'] = ((content_offsetWidth - formlogin_offsetWidth) / 2) + 'px';tabH.style.display = 'none';itemFore4.style.display = 'none';kbCoagent.style.display = 'none';msgWrap.style.display = 'block';loginBox.style.padding = 0;loginBox.style.margin = 0;loginWrap.style.height = 0;loginWrap.style.margin = 0;form.style.margin = '0 auto';for (let j = 0; j < tipsWrapper.length; j++) {let item = tipsWrapper[j];item.style.display = 'none';};for (let i = 0; i < w.length; i++) {let item = w[i];if (i === 0) {item.style.width = '100%';item.style.display = 'inline-block';let w0_offsetWidth = item.offsetWidth;let logo_offsetWidth = logo.offsetWidth;logo.style['margin-left'] = ((w0_offsetWidth - logo_offsetWidth) / 2) + 'px';continue;};item.style.width = '0';if (i === 1) {item.style.margin = '0';};if (i === 3) {item.style.display = 'none';}};for (let k = 0; k < loginTab.length; k++) {let item = loginTab[k];item.style.display = 'none';}};jdnonedomeFn()})()";
 
-    private String jd_hideOthers_android = "(function() {function jdnonedomeFn() {  let loginBanner = document.getElementsByClassName('login-banner')[0];  let tipsWrapper = document.getElementsByClassName('tips-wrapper');  let loginForm = document.getElementsByClassName('login-form')[0];  let w = document.getElementsByClassName('w');  let loginBox = document.getElementsByClassName('login-box')[0];  let qrcodeLogin = document.getElementsByClassName('qrcode-login')[0];  let loginTab = document.getElementsByClassName('login-tab');  let loginTabL = document.getElementsByClassName('login-tab-l')[0];  let loginTabR = document.getElementsByClassName('login-tab-r')[0];  let mc = document.getElementsByClassName('mc');  let tabH = document.getElementsByClassName('tab-h')[0];  let form = document.getElementsByClassName('form')[0];  let itemFore4 = document.getElementsByClassName('item-fore4')[0];  let itemFore1 = document.getElementsByClassName('item-fore1');  let itemFore5 = document.getElementsByClassName('item-fore5');  let kbCoagent = document.getElementById('kbCoagent');  let msgWrap = document.getElementsByClassName('msg-wrap')[0];  let loginWrap = document.getElementsByClassName('login-wrap')[0];  let logo = document.getElementById('logo');  let formlogin = document.getElementById('formlogin');  let html = document.getElementsByTagName('html')[0];  let body = document.getElementsByTagName('body')[0];  let content = document.getElementById('content');  var meta = document.createElement('meta') ;  meta.setAttribute('name', 'viewport');  meta.setAttribute('content', 'width=device-width');  document.getElementsByTagName('head')[0].appendChild(meta);  document.getElementsByClassName('q-link')[0].style.display = 'none'; document.getElementsByClassName('login-banner')[0].style.display = 'none';  let content_offsetWidth = content.offsetWidth;  console.log(content_offsetWidth, 'content_offsetWidth');  loginForm.style.display = 'inline-block';  loginForm.style.float = 'left';  loginForm.style.width = '0';  loginTabL.firstChild.nextElementSibling.className = '';  loginTabR.firstChild.nextElementSibling.className = 'checked';  loginBanner.style.display = 'none';  loginTabR.click();  console.log(loginForm, 'loginForm');  let formlogin_offsetWidth = formlogin.offsetWidth;  console.log(formlogin_offsetWidth, 'formlogin_offsetWidth');  loginForm.style['margin-left'] = ((content_offsetWidth - formlogin_offsetWidth) / 2) + 'px';  tabH.style.display = 'none';  itemFore4.style.display = 'none';  kbCoagent.style.display = 'none';  msgWrap.style.display = 'none';  loginBox.style.padding = 0;  loginBox.style.margin = 0;  loginWrap.style.height = 0;  loginWrap.style.margin = 0;  form.style.margin = '0 auto';  console.log(itemFore5, 'itemFore5');  for (let j = 0; j < tipsWrapper.length; j++) {    let item = tipsWrapper[j];    item.style.display = 'none';  }  for (let i = 0; i < w.length; i++) {    let item = w[i];    if (i === 0) {      item.style.width = '100%';      item.style.display = 'inline-block';      let w0_offsetWidth = item.offsetWidth;      let logo_offsetWidth = logo.offsetWidth;      logo.style['margin-left'] = ((w0_offsetWidth - logo_offsetWidth) / 2) + 'px';      console.log(logo, 'logo');      console.log(w0_offsetWidth, 'w0_offsetWidth');      console.log(logo_offsetWidth, 'logo_offsetWidth');      continue;    }    item.style.width = '0';    if (i === 1) {      item.style.margin = '0';    }    if (i === 3) {      item.style.display = 'none';    }  }  for (let k = 0; k < loginTab.length; k++) {    let item = loginTab[k];    item.style.display = 'none';  }}jdnonedomeFn();document.getElementsByClassName('login-tab login-tab-r')[0].click();})()";
-
-    private String tb_hideOthers_android = "(function() {document.getElementsByClassName('f-right')[0].style.display = 'none';document.getElementsByClassName('f-left')[0].style.display = 'none';document.getElementsByClassName('am-button btn-change')[0].style.display = 'none';})()";
+    private String tb_hideOthers_android = "(function() {document.getElementsByClassName('f-right')[0].style.display = 'none';document.getElementsByClassName('am-button btn-change')[0].style.display = 'none';})()";
 
     private String yhd_hideOthers_android = "(function() {document.getElementById('div_global_app').style.display = 'none';document.getElementsByClassName('touchweb-com_header')[0].style.display = 'none';document.getElementsByClassName('joint_login')[0].style.display = 'none';document.getElementsByClassName('remember_login')[0].style.display = 'none';document.getElementsByClassName('sms_login')[0].style.display = 'none';})()";
 
@@ -97,6 +101,9 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
     private String[] allJS = {tb_hideOthers_android,jd_hideOthers_android,amz_hideOthers_android,su_hideOthers_android,gm_hideOthers_android,yhd_hideOthers_android};
 
     private int position = 1;
+
+    List<CookieModel.PageModel> sList = new ArrayList<>();
+    CookieModel model;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,9 +112,40 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         progress = findViewById(R.id.progress);
         position = getIntent().getIntExtra("position",0);
 
+
+
+        CookieModel.PageModel loginModel = new CookieModel.PageModel();
+        loginModel.setIsCookieUrl("false");
+        loginModel.setIsVisible("true");
+        loginModel.setPageUrl(loginUrls[0]);
+        loginModel.setPageJs(allJS[0]);
+
+        CookieModel.PageModel smsModel = new CookieModel.PageModel();
+        smsModel.setIsVisible("true");
+        smsModel.setIsCookieUrl("false");
+        smsModel.setPageUrl("https://login.m.taobao.com/msg_login.htm");
+        smsModel.setPageJs("");
+
+        CookieModel.PageModel cookieModel = new CookieModel.PageModel();
+        cookieModel.setIsVisible("false");
+        cookieModel.setIsCookieUrl("true");
+        cookieModel.setPageUrl(cookiesUrls[0]);
+        cookieModel.setPageJs("");
+        sList.add(loginModel);
+        sList.add(smsModel);
+        sList.add(cookieModel);
+        model = new CookieModel();
+        model.setPageModels(sList);
+        model.setIsCacheCookies("false");
+        model.setPlatform("taobao");
+        model.setPlatformType(1);
+
+        String json = JSON.toJSONString(model);
+        Log.e("json",json);
+
         CookieSyncManager.createInstance(this);
         CookieSyncManager.getInstance().startSync();
-//        CookieManager.getInstance().removeSessionCookie();
+        CookieManager.getInstance().removeSessionCookie();
 //        if(true){
 //            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 //                CookieManager.getInstance().flush();
@@ -131,13 +169,10 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                if(progress!=null&&view.getUrl().startsWith(loginUrls[position])){
+                if(progress!=null){
                     Log.e("onProgressChanged","url"+ view.getUrl()+" progress"+ newProgress);
                     progress.show();
                     progress.setProgress(newProgress);
-//                    if(newProgress == 100){
-//                        progress.hide();
-//                    }
                 }
             }
         });
@@ -153,48 +188,72 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
             }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+//                for (CookieModel.PageModel pageModel : model.getPageModels()) {
+//                    if(url.contains(pageModel.getUrl())) {
+//                        if (pageModel.getIsCookieUrl().equals("true")) {
+//                            webView.setVisibility(View.INVISIBLE);
+//                            progress.show();
+//                        }
+//                    }
+//                }
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 Log.e("url----->> ", url);
-//                if (isFristLogin) {
-//
-//                    onLoginSuccess(view, url);
-//                    return;
-//                }
-//                webView.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-////                        progress.hide();
-//                        webView.setVisibility(View.VISIBLE);
-//                    }
-//                },1000);
                 if (url.startsWith(loginUrls[position])) {
-//                    isFristLogin = false;
                     System.out.println(allJS[position]);
 //                    mHandler.sendEmptyMessageDelayed(4, 1000);
-                    webView.loadUrl("javascript:"+allJS[position]);
+                    webView.loadUrl("javascript:(function() {"+ allJS[position] + "})()");
                     webView.setVisibility(View.VISIBLE);
                     progress.hide();
                 } else {
-                    if (!url.startsWith(loginUrls[position])) {
-
-//                        if(!url.startsWith(cartUrls[position])){
-//                            webView.loadUrl(cartUrls[position]);
-//                            return;
-//                        }
-
-//                        if (!isFristLogin) {
-//                            isFristLogin = true;
-//                        }
+                    if (url.contains(cookiesUrls[position].substring(cookiesUrls[position].indexOf(":")))) {
                         CookieManager cookieManager = CookieManager.getInstance();
                         String CookieStr = cookieManager.getCookie(url);
-                        if(CookieStr.contains("cookie2")) {
+
+                        if(TextUtils.isEmpty(CookieStr)){
+                            return;
+                        }else{
                             Log.e("CookieStr", CookieStr);
-                            finish();
+                        }
+                        finish();
+                        if(CookieStr.contains("cookie2")) {
+
+
                         }
                     }
                 }
-
+//                for (CookieModel.PageModel pageModel : model.getPageModels()) {
+//                    if(url.contains(pageModel.getUrl())){
+//                        if(pageModel.getIsCookieUrl().equals("true")){
+//                            webView.setVisibility(View.INVISIBLE);
+//                            CookieManager cookieManager = CookieManager.getInstance();
+//                            String CookieStr = cookieManager.getCookie(url);
+//                            if(TextUtils.isEmpty(CookieStr)){
+//                                return;
+//                            }else{
+//                                Log.e("CookieStr", CookieStr);
+//                            }
+//                            finish();
+//                        }else{
+//                            if(pageModel.getIsVisible().equals("true")){
+//                                if(!TextUtils.isEmpty(pageModel.getPageJs())){
+//                                    webView.loadUrl("javascript:(function() {"+ allJS[position] + "})()");
+//                                    webView.setVisibility(View.VISIBLE);
+//                                }else{
+//                                    webView.setVisibility(View.VISIBLE);
+//                                }
+//                                progress.hide();
+//                            }else{
+//                                finish();
+//                            }
+//                        }
+//                    }
+//                }
             }
 
             @Override
@@ -221,6 +280,8 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             if(msg.what == 4){
                 webView.loadUrl("javascript:"+allJS[position]);
+                webView.setVisibility(View.VISIBLE);
+                progress.hide();
             }
         }
     };
@@ -250,6 +311,9 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
 //            CookieManager.getInstance().removeAllCookie();
         if(webView != null) {
             webView.stopLoading();
+            // 清除cookie即可彻底清除缓存
+            CookieSyncManager.createInstance(this);
+            CookieManager.getInstance().removeAllCookie();
             webView.removeAllViews();
             webView.destroy();
         }
