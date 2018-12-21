@@ -388,7 +388,7 @@ public class MessageFragment extends TFragment implements ModuleProxy {
     // 操作面板集合
     protected List<BaseAction> getActionList() {
         List<BaseAction> actions = new ArrayList<>();
-        if(mDisplays.size()>0){
+        if(mDisplays!=null&&mDisplays.size()>0){
             for (DisPlay display : mDisplays) {
                 if(display.id == 1&&display.isShow){
                     actions.add(new PhotoAction());

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -37,6 +38,13 @@ import com.netease.nimlib.sdk.util.NIMUtil;
 
 public class DemoApplication extends Application{
     public static Context mContext;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

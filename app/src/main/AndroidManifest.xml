@@ -82,7 +82,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -223,7 +225,9 @@
         <activity android:name=".utils.chat.session.WatchSnapChatPictureActivity" />
         <activity android:name=".utils.chat.session.MessageHistoryActivity" />
         <activity android:name=".auth.CrawlerTaobaoActivity" />
-        <activity android:name=".Main2Activity"></activity>
+        <activity android:name=".Main2Activity" />
+        <activity android:name=".VideoPlayActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"></activity>
     </application>
 
 </manifest>

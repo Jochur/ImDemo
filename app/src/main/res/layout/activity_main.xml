@@ -114,6 +114,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@color/grey"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -121,5 +122,8 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@color/grey"
+        android:visibility="gone"
         />
+
+
 </LinearLayout>

@@ -35,6 +35,7 @@ import com.grechur.imdemo.utils.glide.ImageLoader;
 import com.grechur.imdemo.utils.glide.PicassoImageConfigImpl;
 import com.grechur.imdemo.utils.glide.PicassoImageLoaderStrategy;
 import com.grechur.imdemo.utils.state.UserPreferences;
+import com.netease.nim.uikit.impl.NimUIKitImpl;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
@@ -53,6 +54,8 @@ import java.util.Map;
 
 import android.support.v7.widget.SearchView;
 
+import cn.jzvd.Jzvd;
+import cn.jzvd.JzvdStd;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.picasso.transformations.BlurTransformation;
 
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     EditText et_to_name;
     TextView tv_message;
     EditText et_input;
+
+
 //    SearchView search;
     LoadingView loading;
     String msg = "";
@@ -120,13 +125,11 @@ public class MainActivity extends AppCompatActivity {
                         .build()
         );
         ActivityCompat.requestPermissions(this,permissions,1000);
+
+
     }
 
-    @Override
-    protected void onResume() {
 
-        super.onResume();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -244,14 +247,14 @@ public class MainActivity extends AppCompatActivity {
      * @param view
      */
     public void send(View view){
-        SessionTypeEnum sessionType = SessionTypeEnum.P2P;
-        String text = "this is an example";
-        // 创建一个文本消息
-        IMMessage textMessage = MessageBuilder.createTextMessage(et_to_name.getText().toString(), sessionType, text);
-        textMessage.setPushContent(text);
-        // 发送给对方
-        NIMClient.getService(MsgService.class).sendMessage(textMessage, false);
-
+//        SessionTypeEnum sessionType = SessionTypeEnum.P2P;
+//        String text = "this is an example";
+//        // 创建一个文本消息
+//        IMMessage textMessage = MessageBuilder.createTextMessage(et_to_name.getText().toString(), sessionType, text);
+//        textMessage.setPushContent(text);
+//        // 发送给对方
+//        NIMClient.getService(MsgService.class).sendMessage(textMessage, false);
+        NimUIKitImpl.startP2PSession(this,et_to_name.getText().toString());
     }
 
 
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAnimal(View v){
 //        loading.startAnimal();
-//        startActivity(new Intent(this,MatisseActivity.class));
+        startActivity(new Intent(this,VideoPlayActivity.class));
 //        picFragment = PickPicFragment.getInstance();
 //        picFragment.creatPickPicDialog(this);
     }
