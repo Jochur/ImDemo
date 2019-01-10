@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -46,8 +47,7 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.zhihu.matisse.ui.MatisseActivity;
-import com.zhihu.matisse.ui.PickPicFragment;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
     ImageView iv_image;
     private String imgurl = "https://www.baidu.com/img/bd_logo1.png";
     private ImageView iv_image2;
-    private PickPicFragment picFragment;
 
 
     String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 //        Glide.with(this).load(imgurl).into(iv_image);
 //        search.startSearch();
 //.transformation(new CropCircleTransformation(this))
-        ImageLoader.getInstance(GlideImageLoaderStrategy.class).LoadImage(this,
+        ImageLoader.getInstance().getService(GlideImageLoaderStrategy.class).loadImage(this,
             GlideImageConfigImpl.builder()
                 .url(imgurl)
                 .hasCache(true)
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 .build()
         );
 
-        ImageLoader.getInstance(PicassoImageLoaderStrategy.class).LoadImage(this,
+        ImageLoader.getInstance().getService(PicassoImageLoaderStrategy.class).loadImage(this,
                 PicassoImageConfigImpl.builder()
                         .url(imgurl)
                         .hasCache(true)
@@ -144,49 +144,49 @@ public class MainActivity extends AppCompatActivity {
         }
         return handler;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.global_search_menu, menu);
-        final MenuItem item = menu.findItem(R.id.action_search);
-        getHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                MenuItemCompat.expandActionView(item);
-            }
-        });
-        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem menuItem) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                finish();
-                return false;
-            }
-        });
-
-        searchView = (SearchView) MenuItemCompat.getActionView(item);
-        SearchView.SearchAutoComplete textView = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
-        textView.setTextColor(Color.RED);
-        textView.setHintTextColor(Color.BLUE);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
-
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String text) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String text) {
-                return true;
-            }
-        });
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.global_search_menu, menu);
+//        final MenuItem item = menu.findItem(R.id.action_search);
+//        getHandler().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                MenuItemCompat.expandActionView(item);
+//            }
+//        });
+//        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
+//            @Override
+//            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+//                finish();
+//                return false;
+//            }
+//        });
+//
+//        searchView = (SearchView) MenuItemCompat.getActionView(item);
+//        SearchView.SearchAutoComplete textView = (SearchView.SearchAutoComplete)searchView.findViewById(R.id.search_src_text);
+//        textView.setTextColor(Color.RED);
+//        textView.setHintTextColor(Color.BLUE);
+//        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
+//
+//        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String text) {
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String text) {
+//                return true;
+//            }
+//        });
+//        return true;
+//    }
 
     public static void start(Context context) {
         start(context, false);
@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAnimal(View v){
 //        loading.startAnimal();
-        startActivity(new Intent(this,VideoPlayActivity.class));
+        startActivity(new Intent(this,Main2Activity.class));
 //        picFragment = PickPicFragment.getInstance();
 //        picFragment.creatPickPicDialog(this);
     }

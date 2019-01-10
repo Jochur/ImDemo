@@ -1,1 +1,1 @@
-include ':app', ':uikit', ':share','jsbridge','matisse'
+include ':app', ':uikit',':lib'

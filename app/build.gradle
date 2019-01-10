@@ -54,11 +54,13 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.5.2'
     compile 'jp.wasabeef:picasso-transformations:2.1.2'
-    compile project(path: ':matisse')
     implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
 
     //完整版引入
     implementation 'com.shuyu:GSYVideoPlayer:6.0.0-beta'
 
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
+
     implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

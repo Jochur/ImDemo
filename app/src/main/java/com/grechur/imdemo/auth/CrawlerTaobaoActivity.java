@@ -68,13 +68,13 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
 //    };
 
     private String[] cookiesUrls = {
-            "https://market.m.taobao.com/app/tmall-wireless/sign-center/pages/index_v2","https://home.jd.com",
+            "https://market.m.taobao.com/app/tmall-wireless/sign-center/pages/index_v2","https://home.m.jd.com/myJd/newhome.action",
             "https://www.amazon.cn/gp/yourstore","https://msinode.suning.com/m/home.do",
             "https://u.m.gome.com.cn/my_gome.html","http://home.m.yhd.com/h5index/index.do"
     };
 
     private String[] loginUrls = {
-            "https://login.m.taobao.com/login.htm","https://passport.jd.com/new/login.aspx",
+            "https://login.m.taobao.com/login.htm","https://plogin.m.jd.com/user/login.action",
             "https://www.amazon.cn/ap/signin",
             "https://passport.suning.com/ids/login",
             "https://login.m.gome.com.cn/login.html","https://passport.yhd.com/m/login_input.do"
@@ -85,7 +85,7 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
             "https://www.amazon.cn/gp/aw/c","https://shopping.suning.com/project/cart/cart1.html",
             "https://cart.m.gome.com.cn/shopping_cart.html","https://cart.m.yhd.com/cart/showCart.do"
     };
-    private String jd_hideOthers_android = "(function() { var wh=document.getElementsByClassName('w');for(i=0;i<wh.length;i++){wh[i].style.cssText= 'width:auto';}document.getElementById('logo').style.marginLeft = '40px';document.getElementsByClassName('q-link')[0].style.display = 'none';document.getElementsByClassName('login-banner')[0].style.display = 'none';document.getElementById('footer-2013').style.display = 'none';document.getElementById('kbCoagent').style.display = 'none';document.getElementsByClassName('item item-fore4')[0].style.display = 'none';document.getElementsByClassName('tips-wrapper')[0].style.display = 'none';document.getElementsByClassName('tips-wrapper')[1].style.display = 'none';document.getElementsByClassName('login-tab login-tab-l')[0].style.display = 'none';var l=document.getElementsByClassName('login-tab login-tab-r')[0];var e=document.createEvent('HTMLEvents');e.initEvent('click',true,true);l.dispatchEvent(e);})()";
+    private String jd_hideOthers_android = "(function() {document.querySelector('#header').style.display = 'none'; document.querySelector('.findpwd').style.display = 'none';document.querySelector('#password').style.paddingRight = '0px';document.querySelector('.label-checkbox').style.right = '0';document.querySelector('.txt-quickReg').style.display = 'none';document.querySelector('.login-type').style.display = 'none';document.querySelector('.icon-clear').style.display = 'none'})()";
     //        private String jd_hideOthers_android = "(function() {function jdnonedomeFn() {let loginBanner = document.getElementsByClassName('login-banner')[0];let tipsWrapper = document.getElementsByClassName('tips-wrapper');let loginForm = document.getElementsByClassName('login-form')[0];let w = document.getElementsByClassName('w');let loginBox = document.getElementsByClassName('login-box')[0];let qrcodeLogin = document.getElementsByClassName('qrcode-login')[0];let loginTab = document.getElementsByClassName('login-tab');let loginTabL = document.getElementsByClassName('login-tab-l')[0];let loginTabR = document.getElementsByClassName('login-tab-r')[0];let mc = document.getElementsByClassName('mc');let tabH = document.getElementsByClassName('tab-h')[0];let form = document.getElementsByClassName('form')[0];let itemFore4 = document.getElementsByClassName('item-fore4')[0];let itemFore1 = document.getElementsByClassName('item-fore1');let itemFore5 = document.getElementsByClassName('item-fore5');let kbCoagent = document.getElementById('kbCoagent');let msgWrap = document.getElementsByClassName('msg-wrap')[0];let loginWrap = document.getElementsByClassName('login-wrap')[0];let logo = document.getElementById('logo');let formlogin = document.getElementById('formlogin');let html = document.getElementsByTagName('html')[0];let body = document.getElementsByTagName('body')[0];let content = document.getElementById('content');var meta = document.createElement('meta') ;meta.setAttribute('name', 'viewport');meta.setAttribute('content', 'width=device-width');document.getElementsByTagName('head')[0].appendChild(meta);document.getElementsByClassName('q-link')[0].style.display = 'none'; document.getElementsByClassName('login-banner')[0].style.display = 'none';let content_offsetWidth = content.offsetWidth;loginForm.style.display = 'inline-block';loginForm.style.float = 'left';loginForm.style.width = '0';loginTabL.firstChild.nextElementSibling.className = '';loginTabR.firstChild.nextElementSibling.className = 'checked';loginBanner.style.display = 'none';loginTabR.click();let formlogin_offsetWidth = formlogin.offsetWidth;loginForm.style['margin-left'] = ((content_offsetWidth - formlogin_offsetWidth) / 2) + 'px';tabH.style.display = 'none';itemFore4.style.display = 'none';kbCoagent.style.display = 'none';msgWrap.style.display = 'block';loginBox.style.padding = 0;loginBox.style.margin = 0;loginWrap.style.height = 0;loginWrap.style.margin = 0;form.style.margin = '0 auto';for (let j = 0; j < tipsWrapper.length; j++) {let item = tipsWrapper[j];item.style.display = 'none';};for (let i = 0; i < w.length; i++) {let item = w[i];if (i === 0) {item.style.width = '100%';item.style.display = 'inline-block';let w0_offsetWidth = item.offsetWidth;let logo_offsetWidth = logo.offsetWidth;logo.style['margin-left'] = ((w0_offsetWidth - logo_offsetWidth) / 2) + 'px';continue;};item.style.width = '0';if (i === 1) {item.style.margin = '0';};if (i === 3) {item.style.display = 'none';}};for (let k = 0; k < loginTab.length; k++) {let item = loginTab[k];item.style.display = 'none';}};jdnonedomeFn()})()";
 
     private String tb_hideOthers_android = "(function() {document.getElementsByClassName('f-right')[0].style.display = 'none';document.getElementsByClassName('am-button btn-change')[0].style.display = 'none';})()";
@@ -117,8 +117,8 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         CookieModel.PageModel loginModel = new CookieModel.PageModel();
         loginModel.setIsCookieUrl("false");
         loginModel.setIsVisible("true");
-        loginModel.setPageUrl(loginUrls[0]);
-        loginModel.setPageJs(allJS[0]);
+        loginModel.setPageUrl(loginUrls[position]);
+        loginModel.setPageJs(allJS[position]);
 
         CookieModel.PageModel smsModel = new CookieModel.PageModel();
         smsModel.setIsVisible("true");
@@ -129,10 +129,10 @@ public class CrawlerTaobaoActivity extends AppCompatActivity {
         CookieModel.PageModel cookieModel = new CookieModel.PageModel();
         cookieModel.setIsVisible("false");
         cookieModel.setIsCookieUrl("true");
-        cookieModel.setPageUrl(cookiesUrls[0]);
+        cookieModel.setPageUrl(cookiesUrls[position]);
         cookieModel.setPageJs("");
         sList.add(loginModel);
-        sList.add(smsModel);
+//        sList.add(smsModel);
         sList.add(cookieModel);
         model = new CookieModel();
         model.setPageModels(sList);

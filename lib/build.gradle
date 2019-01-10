@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation localGroovy()
+}
+//task renameGroovyToJava{
+//    doLast {
+//        delete "$buildDir/classes/java"
+//        File file = new File("buildDir/calsses/groovy")
+//        println file.renameTo("$buildDir/classes/java")
+//    }
+//}
+//compileJava.finalizedBy compileGroovy
+//compileGroovy.finalizedBy renameGroovyToJava
+task renameGroovyToJava {
+    doLast {
+        delete "$buildDir/classes/java"
+        File file = new File("$buildDir/classes/groovy")
+        // file.name = "java" 不行，会报错
+        println file.renameTo("$buildDir/classes/java")
+    }
+}
+
+compileJava.finalizedBy compileGroovy
+compileGroovy.finalizedBy renameGroovyToJava

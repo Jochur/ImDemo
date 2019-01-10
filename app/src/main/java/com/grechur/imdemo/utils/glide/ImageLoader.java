@@ -2,6 +2,10 @@ package com.grechur.imdemo.utils.glide;
 
 import android.content.Context;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
 public class ImageLoader<T extends ImageConfig> {
     private static IBaseImageLoaderStrategy mStrategy;
 
@@ -11,7 +15,7 @@ public class ImageLoader<T extends ImageConfig> {
     }
 
 
-    public static final ImageLoader getInstance(Class<? extends IBaseImageLoaderStrategy> clazz) {
+    public static final ImageLoader getInstance() {
         if(mImageLoader == null){
             synchronized (ImageLoader.class){
                 if(mImageLoader == null){
@@ -19,6 +23,11 @@ public class ImageLoader<T extends ImageConfig> {
                 }
             }
         }
+
+        return mImageLoader;
+    }
+
+    public ImageLoader<T> getService(Class<? extends IBaseImageLoaderStrategy> clazz){
         try {
             mStrategy = (IBaseImageLoaderStrategy) clazz.newInstance();
         } catch (InstantiationException e) {
@@ -26,10 +35,10 @@ public class ImageLoader<T extends ImageConfig> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return mImageLoader;
+        return this;
     }
 
-    public void LoadImage(Context context,T config){
+    public void loadImage(Context context,T config){
         if(this.mStrategy==null){
             mStrategy = new GlideImageLoaderStrategy();
         }
