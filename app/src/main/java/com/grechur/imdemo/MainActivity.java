@@ -2,12 +2,20 @@ package com.grechur.imdemo;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -26,6 +34,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.grechur.imdemo.auth.CrawlerTaobaoActivity;
+import com.grechur.imdemo.bean.AppBean;
 import com.grechur.imdemo.utils.Base64;
 import com.grechur.imdemo.utils.Preferences;
 import com.grechur.imdemo.utils.YunxinCache;
@@ -49,7 +58,14 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.support.v7.widget.SearchView;
@@ -78,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
     String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,18 +132,67 @@ public class MainActivity extends AppCompatActivity {
                 .build()
         );
 
-        ImageLoader.getInstance().getService(PicassoImageLoaderStrategy.class).loadImage(this,
-                PicassoImageConfigImpl.builder()
-                        .url(imgurl)
-                        .hasCache(true)
-                        .placeholder(R.drawable.message_plus_snapchat_normal)
-//                        .transformation(new BlurTransformation(this))
-                        .imageView(iv_image2)
-                        .build()
-        );
+//        ImageLoader.getInstance().getService(PicassoImageLoaderStrategy.class).loadImage(this,
+//                PicassoImageConfigImpl.builder()
+//                        .url(imgurl)
+//                        .hasCache(true)
+//                        .placeholder(R.drawable.message_plus_snapchat_normal)
+////                        .transformation(new BlurTransformation(this))
+//                        .imageView(iv_image2)
+//                        .build()
+//        );
         ActivityCompat.requestPermissions(this,permissions,1000);
 
+        Calendar beginCal = Calendar.getInstance();
+        beginCal.add(Calendar.HOUR_OF_DAY, -1);
+        Calendar endCal = Calendar.getInstance();
+        UsageStatsManager manager=(UsageStatsManager)getApplicationContext().getSystemService(USAGE_STATS_SERVICE);
+        List<UsageStats> stats=manager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,beginCal.getTimeInMillis(),endCal.getTimeInMillis());
+        if(stats==null||stats.size()==0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                try {
+                    startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }else {
+            List<AppBean> appBeans = new ArrayList<>();
+            StringBuilder sb = new StringBuilder();
+            for (UsageStats us : stats) {
+                try {
+                    PackageManager pm = getApplicationContext().getPackageManager();
+                    ApplicationInfo applicationInfo = pm.getApplicationInfo(us.getPackageName(), PackageManager.GET_META_DATA);
+                    if ((applicationInfo.flags & applicationInfo.FLAG_SYSTEM) <= 0) {
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+                        String t = format.format(new Date(us.getLastTimeUsed()));
+                        if (us.getTotalTimeInForeground() > 0) {
+                            AppBean appBean = new AppBean();
+                            appBean.icon=pm.getApplicationIcon(applicationInfo);
+                            appBean.logo=pm.getApplicationLogo(applicationInfo);
+                            appBean.label=pm.getApplicationLabel(applicationInfo).toString();
+                            appBean.time = us.getTotalTimeInForeground();
+                            appBeans.add(appBean);
+                            sb.append(pm.getApplicationLabel(applicationInfo) + "\t" + t + "\t" + us.getTotalTimeInForeground() + "\n");
+                        }
+                    }
+                    tv_message.setText(sb.toString());
+                    AppBean bean = Collections.max(appBeans, new Comparator<AppBean>() {
+                        @Override
+                        public int compare(AppBean o1, AppBean o2) {
+                            return (o1.time < o2.time ? -1 : (o1.time == o2.time? 0 : 1));
+                        }
+                    });
+                    iv_image2.setImageDrawable(bean.icon);
 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        }
     }
 
 
@@ -303,8 +369,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startAnimal(View v){
-//        loading.startAnimal();
-        startActivity(new Intent(this,Main2Activity.class));
+        loading.startAnimal();
+//        startActivity(new Intent(this,Main2Activity.class));
 //        picFragment = PickPicFragment.getInstance();
 //        picFragment.creatPickPicDialog(this);
     }
