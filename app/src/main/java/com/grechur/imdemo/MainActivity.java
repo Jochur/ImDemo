@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -22,16 +25,23 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.alibaba.fastjson.JSONObject;
 import com.grechur.imdemo.auth.CrawlerTaobaoActivity;
 import com.grechur.imdemo.bean.AppBean;
@@ -45,6 +55,8 @@ import com.grechur.imdemo.utils.glide.ImageLoader;
 import com.grechur.imdemo.utils.glide.PicassoImageConfigImpl;
 import com.grechur.imdemo.utils.glide.PicassoImageLoaderStrategy;
 import com.grechur.imdemo.utils.state.UserPreferences;
+import com.grechur.imdemo.view.MyTextSwitcher;
+import com.grechur.imdemo.view.TextSwitchManager;
 import com.netease.nim.uikit.impl.NimUIKitImpl;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -69,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.support.v7.widget.SearchView;
+import android.widget.ViewSwitcher;
 
 import cn.jzvd.Jzvd;
 import cn.jzvd.JzvdStd;
@@ -81,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
     EditText et_to_name;
     TextView tv_message;
     EditText et_input;
-
+    MyTextSwitcher mTextSwitcher;
+    LottieAnimationView load_animation_view;
 
 //    SearchView search;
     LoadingView loading;
@@ -93,7 +107,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     String[] permissions = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+    private SoundPool mSoundPool;
 
+    //文字垂直滚动
+    private int index = 0;//textview上下滚动下标
+    private boolean isFlipping = false; // 是否启用预警信息轮播
+    private List<String> mWarningTextList = new ArrayList<>();
+    TextSwitchManager textSwitchManager;
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         et_input = findViewById(R.id.et_input);
 //        search = findViewById(R.id.search);
         loading = findViewById(R.id.loading);
+        mTextSwitcher = findViewById(R.id.text_switcher);
+        load_animation_view = findViewById(R.id.load_animation_view);
 //        String url = "bsdlks://polymerShopCar/bsdlks://polymerShopCar/h5-dev.xiaoxiangyoupin.com/polymerShopCar/";
 //        Uri mParse = Uri.parse(url);
 //        Toast.makeText(this,mParse.toString(),Toast.LENGTH_SHORT).show();
@@ -143,11 +165,12 @@ public class MainActivity extends AppCompatActivity {
 //        );
         ActivityCompat.requestPermissions(this,permissions,1000);
 
-        Calendar beginCal = Calendar.getInstance();
-        beginCal.add(Calendar.HOUR_OF_DAY, -1);
-        Calendar endCal = Calendar.getInstance();
+        final long USAGE_STATS_PERIOD = 1000 * 60 * 60 * 24 * 1;
+        long now = System.currentTimeMillis();
+        long beginTime = now - USAGE_STATS_PERIOD;
+
         UsageStatsManager manager=(UsageStatsManager)getApplicationContext().getSystemService(USAGE_STATS_SERVICE);
-        List<UsageStats> stats=manager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,beginCal.getTimeInMillis(),endCal.getTimeInMillis());
+        List<UsageStats> stats=manager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,beginTime,now);
         if(stats==null||stats.size()==0){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 try {
@@ -173,28 +196,66 @@ public class MainActivity extends AppCompatActivity {
                             appBean.label=pm.getApplicationLabel(applicationInfo).toString();
                             appBean.time = us.getTotalTimeInForeground();
                             appBeans.add(appBean);
-                            sb.append(pm.getApplicationLabel(applicationInfo) + "\t" + t + "\t" + us.getTotalTimeInForeground() + "\n");
+                            sb.append(pm.getApplicationLabel(applicationInfo) + "\t" + t + "\t" + getString(us.getTotalTimeInForeground()) + "\n");
                         }
                     }
-                    tv_message.setText(sb.toString());
-                    AppBean bean = Collections.max(appBeans, new Comparator<AppBean>() {
-                        @Override
-                        public int compare(AppBean o1, AppBean o2) {
-                            return (o1.time < o2.time ? -1 : (o1.time == o2.time? 0 : 1));
-                        }
-                    });
-                    iv_image2.setImageDrawable(bean.icon);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
-
+//            tv_message.setText(sb.toString());
+            AppBean bean = Collections.max(appBeans, new Comparator<AppBean>() {
+                @Override
+                public int compare(AppBean o1, AppBean o2) {
+                    return (o1.time < o2.time ? -1 : (o1.time == o2.time? 0 : 1));
+                }
+            });
+            iv_image2.setImageDrawable(bean.icon);
 
         }
-    }
 
+        createSoundPoolIfNeeded();
+        mWarningTextList.add("签到");
+        mWarningTextList.add("+20");
+        textSwitchManager = new TextSwitchManager(this,mTextSwitcher,handler);
+        textSwitchManager.setData(mWarningTextList);
+
+        load_animation_view.setImageAssetsFolder("lottieimg/");
+        load_animation_view.setAnimation("data.json");
+        load_animation_view.loop(true);
+        load_animation_view.playAnimation();
+    }
+    /**
+     * 创建SoundPool ，注意 api 等级
+     */
+    private void createSoundPoolIfNeeded(){
+        if (mSoundPool == null) {
+            // 5.0 及 之后
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                AudioAttributes audioAttributes = null;
+                audioAttributes = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build();
+
+                mSoundPool = new SoundPool.Builder()
+                        .setMaxStreams(1)
+                        .setAudioAttributes(audioAttributes)
+                        .build();
+            } else { // 5.0 以前
+                mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);  // 创建SoundPool
+            }
+        }
+    }
+    private String getString(long totalTimeInForeground) {
+        String time = "";
+        long temp = totalTimeInForeground/1000;
+        int hour = (int) (temp/3600);
+        int second = (int) ((temp%3600)/60);
+        int mill = (int) ((temp%3600)%60);
+        time = hour+"小时"+second+"分"+mill+"秒";
+        return time;
+    }
 
 
     @Override
@@ -203,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private static Handler handler;
+    private static Handler handler = new Handler();
     protected final Handler getHandler() {
         if (handler == null) {
             handler = new Handler(getMainLooper());
@@ -370,9 +431,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAnimal(View v){
         loading.startAnimal();
+        if(mSoundPool != null){
+            int id = mSoundPool.load(this,R.raw.push,5);
+            mSoundPool.play(id,1, 1, 0,0,1);
+        }
+        mWarningTextList.add("genxin");
+        textSwitchManager.setData(mWarningTextList);
 //        startActivity(new Intent(this,Main2Activity.class));
 //        picFragment = PickPicFragment.getInstance();
 //        picFragment.creatPickPicDialog(this);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        textSwitchManager.startFlipping();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        textSwitchManager.stopFlipping();
+    }
 }

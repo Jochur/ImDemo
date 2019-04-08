@@ -114,7 +114,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@color/grey"
-        android:visibility="visible"
+        android:visibility="gone"
         />
 
     <ImageView
@@ -122,8 +122,33 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:src="@color/grey"
-        android:visibility="visible"
+        android:visibility="gone"
         />
+    <FrameLayout
+        android:layout_width="39dp"
+        android:layout_height="39dp">
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/load_animation_view"
+            android:layout_width="39dp"
+            android:layout_height="39dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="visible"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="data.json"
+            app:lottie_loop="true"
+            app:lottie_scale="0.5"/>
+        <FrameLayout
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:background="@mipmap/signed_bg"
+            android:layout_gravity="center">
+            <com.grechur.imdemo.view.MyTextSwitcher
+                android:id="@+id/text_switcher"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
 
-
+                />
+        </FrameLayout>
+    </FrameLayout>
 </LinearLayout>
